@@ -11,5 +11,9 @@ trim_trailing_whitespace = true
 [*.go]
 indent_style = tab
 
+# gdformat and the Godot editor indent GDScript with tabs.
+[*.gd]
+indent_style = tab
+
 [*.md]
 trim_trailing_whitespace = false

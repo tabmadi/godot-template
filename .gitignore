@@ -17,3 +17,8 @@
 
 # Planned work stays local, per ADR-0000
 *.local.md
+
+# Godot
+.godot/
+/android/
+/build/

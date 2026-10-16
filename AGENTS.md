@@ -6,7 +6,7 @@ This guide is for any coding agent that works in this repo. `AGENTS.md` is the o
 
 ## Read first
 
-- [ADR-0000](docs/adr/0000-foundations.md): what this repo is and the ADR process.
+- [ADR-0000](docs/adr/0000-foundations.md): the layout and the GDScript conventions.
 - [docs/adr/README.md](docs/adr/README.md): the ADR index. To check a convention, grep the `Rules` sections first.
 
 ## Write in Simple English
@@ -20,8 +20,11 @@ Every text follows the Simple English profile in [ADR-0001](docs/adr/0001-docume
 
 ## Working in the repo
 
-- Run every command as `mise run <task>`. A bare tool call resolves from `PATH` at an unpinned version.
-- Everything here is inherited by every repo made from it. Add nothing that is specific to one language or one project.
-- Keep the task names. A generated repo fills them in, per [ADR-0100](docs/adr/0100-toolchain.md).
+- Run every command as `mise run <task>`. A bare `godot` or `gdlint` call resolves from `PATH` at an unpinned version.
+- `.godot/` is a cache. `mise run import` rebuilds it, and the tests need it. Commit every `*.uid` file that Godot writes.
+- Change `project.godot` and `*.tscn` files in the editor when you can. A hand edit must keep the format that the editor writes.
+- Every declaration has a static type. An untyped declaration fails the tests.
+- A test file is `tests/**/test_*.gd`, extends `res://tests/test_case.gd`, and has methods named `test_*`.
+- Everything here is inherited by every generated game. Add an addon only when the template itself needs it.
 - Before you finish a change, run `mise run check`.
 - Commit messages are a Conventional Commits title only, with no body. Never push unless asked to.

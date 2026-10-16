@@ -1,0 +1,8 @@
+# The gdlint rules for `mise run lint:gd` and the pre-commit hook. Every other rule keeps its default.
+# Rules: https://github.com/Scony/godot-gdscript-toolkit/wiki/3.-Linter
+
+# `.godot/` is the editor cache, and `addons/` holds third-party code.
+excluded_directories: !!set
+  .git: null
+  .godot: null
+  addons: null

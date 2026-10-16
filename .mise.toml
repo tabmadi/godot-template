@@ -1,18 +1,38 @@
 # Every tool that the repo needs is pinned here. `mise install` installs them.
 
 [tools]
+"aqua:godotengine/godot" = "4.7.2-stable"
+uv = "0.13.1"
+"pipx:gdtoolkit" = "4.5.0"
 lefthook = "2.2.2"
 cocogitto = "7.0.0"
 gitleaks = "8.30.1"
 rumdl = "0.2.79"
 
+[tasks.import]
+description = "Import the assets and build the .godot cache, which the tests need"
+run = "godot --headless --import"
+
 [tasks.setup]
-description = "Install the git hooks"
+description = "Import the project and install the git hooks"
+depends = ["import"]
 run = "lefthook install"
 
-[tasks.format]
-description = "Apply every formatter"
-run = "rumdl check --fix ."
+[tasks.run]
+description = "Run the game"
+run = "godot --path ."
+
+[tasks.edit]
+description = "Open the project in the Godot editor"
+run = "godot --editor --path ."
+
+[tasks.test]
+description = "Run the tests headless"
+run = "godot --headless --script res://tests/runner.gd"
+
+[tasks."lint:gd"]
+description = "gdlint and the gdformat check"
+run = ["gdlint .", "gdformat --check ."]
 
 [tasks."lint:md"]
 description = "Markdown structure and formatting, per ADR-0001"
@@ -24,11 +44,11 @@ run = "gitleaks dir . --no-banner"
 
 [tasks.lint]
 description = "Every linter"
-depends = ["lint:md", "lint:secrets"]
+depends = ["lint:gd", "lint:md", "lint:secrets"]
 
-[tasks.test]
-description = "Run the tests"
-run = "echo 'No tests'"
+[tasks.format]
+description = "Apply every formatter"
+run = ["gdformat .", "rumdl check --fix ."]
 
 [tasks.check]
 description = "The gate: run it before you finish a change"
@@ -36,4 +56,4 @@ run = ["mise run lint", "mise run test"]
 
 [tasks.ci]
 description = "Run exactly what CI runs. The pre-push hook and the CI workflow call it"
-run = ["mise run check"]
+run = ["mise run import", "mise run check"]

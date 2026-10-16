@@ -9,7 +9,15 @@ commit-msg:
       run: mise x -- cog verify --file {1}
 
 pre-commit:
+  piped: true
   commands:
+    gdformat:
+      glob: "*.gd"
+      run: mise x -- gdformat {staged_files}
+      stage_fixed: true
+    gdlint:
+      glob: "*.gd"
+      run: mise x -- gdlint {staged_files}
     markdown:
       glob: "*.md"
       run: mise x -- rumdl check {staged_files}

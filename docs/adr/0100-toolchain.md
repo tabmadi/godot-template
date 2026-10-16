@@ -1,7 +1,7 @@
 # ADR-0100: Toolchain
 
 **Status:** Accepted
-**Decides:** The pinned toolchain, the task surface, what runs at commit and push time, and how the pins stay current.
+**Decides:** The pinned toolchain, the task surface, what runs at commit and push time, how the pins stay current, and how a release is tagged.
 
 ## Context
 
@@ -36,11 +36,17 @@ A Godot project adds one more failure. The engine version on each machine is oft
 | `check` | Runs `lint` and `test`. It is the gate before a change is finished |
 | `ci` | Runs `import` and `check`, exactly what CI runs |
 
-`gdlint` runs with its default rules. `gdlintrc` only excludes `.godot/` and `addons/`. The tests need the `.godot` cache, so `ci` runs `import` first.
+`gdlint` runs with its default rules. `gdlintrc` only excludes `.godot/` and `addons/`. `gdformat` does not read `gdlintrc`, so `gdformatrc` excludes the same directories and keeps the default settings. The tests need the `.godot` cache, so `ci` runs `import` first.
 
 A hook has no active mise shell, so each hook command runs its tool through `mise x` or a `mise` task. The `pre-commit` hook runs `gdformat` and `gdlint` on the staged GDScript, and `rumdl` and `gitleaks`. The `pre-push` hook runs `cog check` on the commits that the push adds, and `mise run ci`.
 
 The CI workflow runs `mise run ci` on every push to `master` and on every pull request. On a pull request, it also verifies the title with `cog`. Renovate opens a pull request for a new tool or Action version, and the CI gate decides.
+
+### Releases
+
+A release is a git tag in [CalVer](https://calver.org/): `vYYYY.0M.MICRO`. The first release in a month has `MICRO` 0, and each later release in that month adds 1.
+
+A game copies the template once, at a release tag, and does not take later releases. No consumer depends on a compatibility promise, so the version states only the date of the release.
 
 ## Consequences
 
@@ -56,7 +62,9 @@ Renovate needs the Renovate GitHub app on the repository. Without it, the pins g
 - Every command is a `mise` task with a `description`. A CI workflow step calls a task, never a tool directly.
 - A git hook runs every tool through `mise x` or a `mise` task.
 - GDScript is formatted by `gdformat`, and passes `gdlint`. `(CI: lint:gd)`
+- `gdlintrc` and `gdformatrc` exclude the same directories.
 - The project opens only in the pinned Godot version.
 - Commit messages and pull request titles follow Conventional Commits with the type set in `cog.toml`. `(ref: Conventional Commits 1.0.0)`
 - `mise run check` passes before a change is finished.
 - A workflow never puts event text, such as a pull request title, directly into a `run` script.
+- A release is a git tag `vYYYY.0M.MICRO`. `(ref: CalVer)`

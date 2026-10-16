@@ -1,0 +1,10 @@
+# The gdformat settings for `mise run lint:gd`, `mise run format`, and the pre-commit hook.
+# gdformat does not read gdlintrc, so the excluded directories repeat here.
+
+excluded_directories: !!set
+  .git: null
+  .godot: null
+  addons: null
+line_length: 100
+safety_checks: null
+use_spaces: null
